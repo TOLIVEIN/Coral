@@ -20,6 +20,7 @@ class GameItem(scrapy.Item):
 
 
 class GameDetailItem(scrapy.Item):
+    # url = scrapy.Field()
     cover = scrapy.Field()
     platforms = scrapy.Field()
     name = scrapy.Field()

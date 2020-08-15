@@ -12,6 +12,23 @@ BOT_NAME = 'Coral'
 SPIDER_MODULES = ['Coral.spiders']
 NEWSPIDER_MODULE = 'Coral.spiders'
 
+SPLASH_URL = 'http://localhost:8050'
+
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
+
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
+
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
+
+
+MONGO_DB_URL = 'mongodb://{user}:{password}@101.200.216.231:27017'
+MONGO_DB_NAME = 'coral'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'Coral (+http://www.yourdomain.com)'
@@ -64,7 +81,8 @@ DEFAULT_REQUEST_HEADERS = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'Coral.pipelines.CoralPipeline': 300,
+    # 'Coral.pipelines.CoralPipeline': 300,
+    'Coral.pipelines.MongoPipeline': 600,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

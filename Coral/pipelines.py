@@ -8,6 +8,7 @@
 from itemadapter import ItemAdapter
 import json
 from Coral.items import GameItem, GameDetailItem
+import pymongo
 
 
 class CoralPipeline:
@@ -28,3 +29,27 @@ class CoralPipeline:
     def close_spider(self, spider):
         self.game.close()
         self.game_detail.close()
+
+
+class MongoPipeline:
+    @classmethod
+    def from_crawler(cls, crawler):
+        cls.DB_URL = crawler.settings.get('MONGO_DB_URL', 'mongodb://localhost:27017')
+        cls.DB_NAME = crawler.settings.get('MONGO_DB_NAME', 'scrapy_data')
+        return cls()
+
+    def open_spider(self, spider):
+        self.client = pymongo.MongoClient(self.DB_URL)
+        self.db = self.client[self.DB_NAME]
+
+    def close_spider(self, spider):
+        self.client.close()
+
+    def process_item(self, item, spider):
+        if isinstance(item, GameItem):
+            collection = self.db['yys_game']
+        elif isinstance(item, GameDetailItem):
+            collection = self.db['yys_game_detail']
+        post = ItemAdapter(item).asdict()
+        collection.insert_one(post)
+        return item
